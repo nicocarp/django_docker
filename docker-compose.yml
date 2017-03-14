@@ -4,19 +4,18 @@ services:
   db:
     image: postgres
     ports:
-    - "5432:5432"
+      - "5432:5432"
   web:
     build: 
       context: ./app
       dockerfile: Dockerfile
-    #command: /app/./wait-for-postgres.sh db python manage.py runserver 0.0.0.0:8000
     command: python app/manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
     #ports:
     #  - "8000:8000"
-    ports:
-    - "8000:8000"
+    expose:
+      - "8000"
     depends_on:
       - db
   nginx:
@@ -24,8 +23,8 @@ services:
     volumes:
       - .:/code
     volumes_from:
-    - web
+      - web
     ports:
-    - "8080:80"
+      - "8080:80"
     links:
-    - web:web
+      - web:web
