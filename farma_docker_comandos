@@ -1,0 +1,12 @@
+Pasos recordatorios para iniciar el proyecto farma-docker.
+
+descargamos el repositorio. Este proyecto contiene le archivo Dockerfile el cual se encarga de crear la imagen para la aplicacion, esto es: aplicacion + dependencias.
+
+Ejecutar los siguientes comandos:
+1- sudo chown -R $USER:$USER .
+1- docker-compose build  // creamos los contenedores a partir de docker compose.
+2- docker-compose run web python manage.py migrate
+3- docker-compose run web python manage.py createsuperuser
+3- docker-compose up    // iniciamos los contenedores creados.
+
+
