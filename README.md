@@ -1,0 +1,1 @@
+AppDjango + nginx + postgres + gunicorn en contenedores Docker
