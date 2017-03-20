@@ -6,5 +6,10 @@ RUN pip install Django==1.8.17
 ADD requirements.txt /code/
 RUN pip install -r requirements.txt
 
+ENV NOMBRE_DB=postgres
+ENV USUARIO_DB=postgres
+ENV HOST_DB=db
+ENV PORT_DB=5432
+
 ADD . /code/
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]	

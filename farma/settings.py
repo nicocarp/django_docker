@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'farma.wsgi.application'
 DATABASES = {
     'default': {
          'ENGINE': 'django.db.backends.postgresql_psycopg2',
-         'NAME': 'postgres',
-         'USER': 'postgres',
-         'HOST': 'db',
-         'PORT': 5432,
+         'NAME': os.environ["NOMBRE_DB"],
+         'USER': os.environ["USUARIO_DB"],
+         'HOST': os.environ["HOST_DB"],
+         'PORT': os.environ["PORT_DB"],
      }
 }
 
