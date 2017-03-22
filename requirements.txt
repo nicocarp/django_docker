@@ -1,4 +1,4 @@
-
+Django==1.8.17
 psycopg2
 django-easy-pdf
 git+https://github.com/chrisglass/xhtml2pdf.git
@@ -13,3 +13,4 @@ django-bootstrap-dynamic-formsets
 django-allauth
 django-jsonview
 xlsxwriter
+gunicorn
