@@ -37,7 +37,8 @@ INSTALLED_APPS = (
     'medicamentos',
     'organizaciones',
     'pedidos',
-    'usuarios'
+    'usuarios',
+    'django_celery_results'
 )
 
 MIDDLEWARE_CLASSES = (

@@ -14,3 +14,5 @@ django-allauth
 django-jsonview
 xlsxwriter
 gunicorn
+celery
+django-celery-results

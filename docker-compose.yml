@@ -11,6 +11,8 @@ services:
       - "8000"
     depends_on:
       - db
+    links:
+      - rabbit
   nginx:
     build: ./nginx
     ports:
@@ -21,3 +23,14 @@ services:
       - web
     links:
       - web:web
+
+  rabbit:
+    hostname: rabbit
+    image: rabbitmq:3.6.0
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=mypass
+    ports:
+      - "5672:5672"  # we forward this port because it's useful for debugging
+      - "15672:15672"  # here, we can access rabbitmq management plugin
+
