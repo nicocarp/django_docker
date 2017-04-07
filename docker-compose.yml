@@ -24,7 +24,6 @@ services:
     links:
       - web:web
 
-
   rabbit:
     hostname: rabbit
     image: rabbitmq
