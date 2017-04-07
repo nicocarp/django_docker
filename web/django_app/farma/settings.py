@@ -78,10 +78,10 @@ WSGI_APPLICATION = 'farma.wsgi.application'
 DATABASES = {
     'default': {
          'ENGINE': 'django.db.backends.postgresql_psycopg2',
-         'NAME': os.environ["NOMBRE_DB"],
-         'USER': os.environ["USUARIO_DB"],
-         'HOST': os.environ["HOST_DB"],
-         'PORT': os.environ["PORT_DB"],
+         'NAME': os.environ.get('NOMBRE_DB', 'postgres'),
+         'USER': os.environ.get('USUARIO_DB', 'postgres'),
+         'HOST': os.environ.get('HOST_DB', 'postgres'),
+         'PORT': os.environ.get('PORT_DB', 'postgres') 
      }
 }
 
@@ -120,3 +120,9 @@ LOGIN_URL = '/admin/login'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
+# VARIABLES PARA CELERY
+CELERY_ENABLE_UTC = True  
+CELERY_TIMEZONE = "UTC"
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_BACKEND = 'django-cache'
+CELERY_BROKER_URL = 'amqp://guest:guest@rabbit//'

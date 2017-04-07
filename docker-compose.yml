@@ -1,10 +1,10 @@
 version: '2'
 services:
   db:
-    image: postgres
+    image: postgres    
   web:
-    build: . 
-    command: ./run_web.sh
+    build: ./web 
+    command: ./web/run_web.sh
     volumes:
       - .:/code
     expose:
@@ -13,6 +13,11 @@ services:
       - db
     links:
       - rabbit
+    environment:
+      - NOMBRE_DB=postgres
+      - USUARIO_DB=postgres
+      - HOST_DB=db
+      - PORT_DB=5432
   nginx:
     build: ./nginx
     ports:
@@ -21,16 +26,22 @@ services:
       - .:/code
     volumes_from:
       - web
-    links:
-      - web:web
-
+    depends_on:
+      - web
   rabbit:
     hostname: rabbit
     image: rabbitmq
-    environment:
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=mypass
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-
+    expose:
+      - "5672"
+      - "15672"
+  # Celery worker
+  worker:
+    build: ./web
+    command: ./celery/run_celery.sh
+    volumes:
+      - .:/code
+    links:
+      - db
+      - rabbit
+    depends_on:
+      - rabbit  
