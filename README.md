@@ -1,37 +1,56 @@
-# django_docker
+==============================================================
+ Administracion de Redes y Seguridad 2017
+==============================================================
 
-Tp final para Adminmistracion de Redes y Seguridad: django + nginx + postgres en contenedores Docker
+Django + Postgres + nginx + celery en contenedores Docker
+=========================================================
 
-Para iniciar la aplicacion, descargar el repo y ejecutar los siguientes comandos con docker instalado.
+``web/``
+---------
 
-docker-compose build
+Aplicacion Django Farma 2015. Modificamos settings para poner la aplicacion en produccion: usar postgres, configuracion de celery, allowed_hosts, debug y demas.
 
-docker-compose run web python manage.py migrate
+``celery/``
+---------
 
-docker-compose up
+Contiene solo un script con comandos que se ejecutaran al momento de lanzar el contenedor worker. Este contenedor se crea a partir del mismo Dockerfile que web. 
 
--- Luego en otra terminal
+``nginx/``
+---------
 
-docker ps
+Contiene su correspondiente Dockerfile con imagen nginx, y archivo de configuracion default.conf. Esta configuracion permite a nginx recuperar los archivos estaticos y trabajar como proxy_pass hacia nuestra contenedor web. 
 
--- copiar id del contenedor ejecutandose correspondiente al contenedor web.
+Installing requirements
+=======================
 
-docker exec -ti <id_contenedor_web> python manage.py createsuperuser
+Docker
 
-Por ultimo ir al navegador y entrar en localhost:8080
+https://www.docker.com/get-docker
 
-Luego de la primera vez, solo ejecutar 
+Iniciar la aplicacion
+=====================
 
-docker-compose up -d
+.. code-block:: console
 
-Para probar celery: copiar id de contendedor worker y ejecutar
-docker exec -ti <id_contenedor_worker> bash
-python manage.py shell
+	$sudo chown -R $USER:$USER
+    $ docker-compose build
+    $ docker-compose up -d
+    $ docker exec -ti finalseguridad_web_1 bash
 
-from organizaciones import tasks
-res = tasks.add.delay(2,5)
+Una vez dentro del contenedor web creamos un superusuario para acceder a la aplicacion
 
--- vemos el log del contenedor worker el cual muestra el resultado.
+.. code-block:: console
 
-permisos
-sudo chown -R $USER:$USER
+    $ python web/django_app/manage.py createsuperuser  
+
+Para probar Celery
+=====================
+
+.. code-block:: console
+
+    $ docker exec -ti finalseguridad_worker_1 bash
+    $ python manage.py shell
+    $ >> from organizaciones import tasks
+	$ >> res = tasks.add.delay(2,5)
+
+Vemos el log del contenedor worker el cual muestra el resultado.
