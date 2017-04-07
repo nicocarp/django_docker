@@ -1,0 +1,44 @@
+{% extends "base/base-add-update-2.html" %}
+{% load staticfiles %}
+
+{% block more-stylesheets %}
+     <link rel="stylesheet" href="{%  static 'css/jquery-ui.custom.min.css'  %}">
+    {{ form.media.css }}
+{% endblock %}
+
+{% block title %}Alta Recepción de Pedido a Laboratorio{% endblock %}
+
+{% block breadcrumb-items %}
+    <li><a href="{% url 'inicio' %}">Inicio</a></li>
+    <li><a href="{% url 'recepcionPedidoAlaboratorio' %}">Recepción de Pedidos a Laboratorio</a></li>
+    <li class="active">Alta</li>
+{% endblock %}
+
+{% block url-volver %}{% url 'recepcionPedidoAlaboratorio' %}{% endblock %}
+
+{% block header-title %} Alta Recepción de Pedido a Laboratorio {% endblock %}
+
+{% block title-header-form %}Registrar recepción de pedido a laboratorio{% endblock %}
+
+{% block icon-header-form %}
+    <span class="icon-file-text page-header-icon"></span>
+{% endblock%}
+
+{% block sub-header-form %}Ingrese los datos del remito{% endblock %}
+
+{% block no-msg-success %}
+{% endblock %}
+
+{% block more-scripts %}
+<script src="{% static 'js/datepicker.js' %}"></script>
+    {{ form.media.js }}
+    <script>
+        $(document).on("keyup", function(e){
+            if(e.keyCode == 112){
+                var url = "{% static 'documentacion/build/html/receppedidosdelab.html' %}";
+                url += "#registrar-recepcion";
+                window.open(url);
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base/base-add-update-2.html" %}
+{% load staticfiles %}
+
+{% block title %}Modificar Stock Mínimo{% endblock %}
+
+{% block breadcrumb-items %}
+    <li><a href="{% url 'inicio' %}">Inicio</a></li>
+    <li><a href="{% url 'medicamentos' %}">Medicamentos</a></li>
+    <li class="active">Modificar Stock Mínimo</li>
+{% endblock %}
+
+{% block url-volver %}{% url 'medicamentos' %}{% endblock %}
+
+{% block header-title %} Modificar Stock Mínimo {% endblock %}
+
+{% block title-header-form %}Actualizar <span class="element-update">"{{medicamento}}"</span>{% endblock %}
+
+{% block icon-header-form %}
+    <span class="glyphicon glyphicon-edit page-header-icon"></span>
+{% endblock%}
+
+{% block sub-header-form %}Actualice el stock mínimo{% endblock %}
+
+{% block no-msg-success %} {% endblock %}
+
+{% block more-scripts %}
+    <script>
+        $(document).on("keyup", function(e){
+            if(e.keyCode == 112){
+                var url = "{% static 'documentacion/build/html/medicams.html' %}";
+                url += "#modificar-stock-minimo";
+                window.open(url);
+            }
+        });
+    </script>
+{% endblock %}

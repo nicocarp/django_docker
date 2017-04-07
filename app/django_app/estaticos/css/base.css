@@ -1,0 +1,47 @@
+/*
+    rgb(124,124,124) // gris oscuro(color letra)
+    rgb(203,203,203) // gris claro
+    rgb(33,53,64) // negro ?
+    rgb(222,174,58) // naranja
+    rgb(0,70,147) // azul oscuro
+    rgb(51,107,169) // azul claro
+*/
+@import url("normalize.css");
+@import url("nav.css");
+@import url("footer.css");
+
+a{
+    color: rgb(0,70,147);
+    text-decoration: none;
+}
+
+a:hover,
+a:focus{
+    text-decoration: none;
+}
+
+a:focus{
+    outline: none;
+}
+
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"]{
+    padding: 0;
+}
+
+button:active,
+input[type="button"]:active,
+input[type="reset"]:active,
+input[type="submit"]:active{
+    outline: 0;
+    border-style: solid;
+}
+
+
+body {
+    padding-top: 62px;
+}
+
+

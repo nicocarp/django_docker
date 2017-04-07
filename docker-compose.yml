@@ -4,7 +4,7 @@ services:
     image: postgres
   web:
     build: . 
-    command: gunicorn -w 4 --bind 0.0.0.0:8000 farma.wsgi:application
+    command: ./run_web.sh
     volumes:
       - .:/code
     expose:
@@ -24,13 +24,23 @@ services:
     links:
       - web:web
 
+#  worker:
+ #   build: ./celery      
+  #  command: ./run_celery.sh
+   # volumes:
+   #   - .:/app
+  #  links:
+   #   - db
+    #  - rabbit
+   # depends_on:
+  #    - rabit
   rabbit:
     hostname: rabbit
-    image: rabbitmq:3.6.0
+    image: rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=mypass
     ports:
-      - "5672:5672"  # we forward this port because it's useful for debugging
-      - "15672:15672"  # here, we can access rabbitmq management plugin
+      - "5672:5672"
+      - "15672:15672"
 
