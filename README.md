@@ -1,9 +1,16 @@
-==============================================================
- Administracion de Redes y Seguridad 2017
-==============================================================
+Administracion de Redes y Seguridad 2017
+=========================================
 
 Django + Postgres + nginx + celery en contenedores Docker
 =========================================================
+
+  - [Contenido](#Contenido)
+  - [Requerimientos](#Requerimientos)
+  - [Iniciar la Aplicacion](#Iniciar la Aplicacion)
+  - [Para probar Celery](#Para probar Celery )
+  
+
+## Contenido ##
 
 ``web/``
 ---------
@@ -20,17 +27,11 @@ Contiene solo un script con comandos que se ejecutaran al momento de lanzar el c
 
 Contiene su correspondiente Dockerfile con imagen nginx, y archivo de configuracion default.conf. Esta configuracion permite a nginx recuperar los archivos estaticos y trabajar como proxy_pass hacia nuestra contenedor web. 
 
-Installing requirements
-=======================
+## Installing requirements ##
 
-Docker
+- [Docker]: https://www.docker.com/get-docker
 
-https://www.docker.com/get-docker
-
-Iniciar la aplicacion
-=====================
-
-.. code-block:: console
+## Iniciar la aplicacion ##
 
 	$sudo chown -R $USER:$USER
     $ docker-compose build
@@ -39,14 +40,9 @@ Iniciar la aplicacion
 
 Una vez dentro del contenedor web creamos un superusuario para acceder a la aplicacion
 
-.. code-block:: console
-
     $ python web/django_app/manage.py createsuperuser  
 
-Para probar Celery
-=====================
-
-.. code-block:: console
+## Para probar Celery ##
 
     $ docker exec -ti finalseguridad_worker_1 bash
     $ python manage.py shell
