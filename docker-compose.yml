@@ -1,30 +1,47 @@
 version: '2'
-
 services:
   db:
-    image: postgres
-    ports:
-      - "5432:5432"
+    image: postgres    
   web:
-    build: 
-      context: ./app
-      dockerfile: Dockerfile
-    command: python app/manage.py runserver 0.0.0.0:8000
+    build: ./web 
+    command: ./web/run_web.sh
     volumes:
       - .:/code
-    #ports:
-    #  - "8000:8000"
     expose:
       - "8000"
     depends_on:
       - db
+    links:
+      - rabbit
+    environment:
+      - NOMBRE_DB=postgres
+      - USUARIO_DB=postgres
+      - HOST_DB=db
+      - PORT_DB=5432
   nginx:
     build: ./nginx
+    ports:
+      - "8080:80"
     volumes:
       - .:/code
     volumes_from:
       - web
-    ports:
-      - "8080:80"
+    depends_on:
+      - web
+  rabbit:
+    hostname: rabbit
+    image: rabbitmq
+    expose:
+      - "5672"
+      - "15672"
+  # Celery worker
+  worker:
+    build: ./web
+    command: ./celery/run_celery.sh
+    volumes:
+      - .:/code
     links:
-      - web:web
+      - db
+      - rabbit
+    depends_on:
+      - rabbit  
