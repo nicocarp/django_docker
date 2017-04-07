@@ -24,16 +24,7 @@ services:
     links:
       - web:web
 
-#  worker:
- #   build: ./celery      
-  #  command: ./run_celery.sh
-   # volumes:
-   #   - .:/app
-  #  links:
-   #   - db
-    #  - rabbit
-   # depends_on:
-  #    - rabit
+
   rabbit:
     hostname: rabbit
     image: rabbitmq
