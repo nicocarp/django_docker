@@ -29,11 +29,15 @@ Contiene su correspondiente Dockerfile con imagen nginx, y archivo de configurac
 
 ## Requerimientos ##
 
-- [Docker]: https://www.docker.com/get-docker
+  - [Docker][docker-path].
+  - [Docker-compose][docker-compose-path]
+
+[docker-path]: https://www.docker.com/get-docker/
+[docker-compose-path]: https://docs.docker.com/compose/
 
 ## Iniciar la aplicacion ##
 
-	$sudo chown -R $USER:$USER
+    $sudo chown -R $USER:$USER
     $ docker-compose build
     $ docker-compose up -d
     $ docker exec -ti finalseguridad_web_1 bash
@@ -46,7 +50,7 @@ Una vez dentro del contenedor web creamos un superusuario para acceder a la apli
 
     $ docker exec -ti finalseguridad_worker_1 bash
     $ python manage.py shell
-    $ >> from organizaciones import tasks
-	$ >> res = tasks.add.delay(2,5)
+    $ >>> from organizaciones import tasks
+    $ >>> res = tasks.add.delay(2,5)
 
 Vemos el log del contenedor worker el cual muestra el resultado.
