@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'easy_pdf',
     'reportlab',
 
+    'farma',
     'medicamentos',
     'organizaciones',
     'pedidos',

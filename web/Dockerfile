@@ -5,4 +5,4 @@ WORKDIR /code
 ADD django_app/requirements.txt /code/
 RUN pip install -r requirements.txt
 
-ADD . /code/
+#ADD . /code/

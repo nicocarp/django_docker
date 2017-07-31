@@ -10,6 +10,8 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^selectable/', include('selectable.urls')),
     url(r'^$', views.inicio, name="inicio"),
+    url(r'^con_celery', views.test_con_celery, name="test_con_celery"),
+    url(r'^sin_celery', views.test_sin_celery, name="test_sin_celery"),
 
     # =============================================================================================== #
     #                                       USUARIOS
