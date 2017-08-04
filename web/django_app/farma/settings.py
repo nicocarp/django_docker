@@ -127,3 +127,12 @@ CELERY_TIMEZONE = "UTC"
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_RESULT_BACKEND = 'django-cache'
 CELERY_BROKER_URL = 'amqp://guest:guest@rabbit//'
+
+# ENVIO DE MAILS
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'calfuquir.nico2@gmail.com'
+EMAIL_HOST_PASSWORD = ''
