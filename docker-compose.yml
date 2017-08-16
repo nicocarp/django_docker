@@ -1,12 +1,12 @@
 version: '2'
 services:
   db:
-    image: postgres    
+    image: postgres
+    volumes:
+        - ./volumen_db:/var/lib/postgresql/data
   web:
     build: ./web 
-    command: ./web/run_web.sh
-    volumes:
-      - .:/code
+    command: ./run_web.sh
     expose:
       - "8000"
     depends_on:
@@ -23,9 +23,7 @@ services:
     ports:
       - "8888:80"
     volumes:
-      - .:/code
-    volumes_from:
-      - web
+      - ./web/django_app/estaticos:/estaticos
     depends_on:
       - web
   rabbit:
@@ -37,9 +35,7 @@ services:
   # Celery worker
   worker:
     build: ./web
-    command: ./celery/run_celery.sh
-    volumes:
-      - .:/code
+    command: bash -c "cd django_app/ && celery -A farma worker -l info"
     links:
       - db
       - rabbit
