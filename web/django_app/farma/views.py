@@ -19,13 +19,16 @@ def paginaEnConstruccion(request):
 
 def test_con_celery(request):
     data = serializers.serialize("json", medicamento_models.Monodroga.objects.all())
-    x = random.choice([1,2,3])
-    y = random.choice([1,2,3])
-    res = tasks.add.delay(x,y)
-    return render(request, "test_celery.html", {'resultado':1, "monodrogas": data})
+    tasks.enviar_mail.delay()
+    #x = random.choice([1,2,3])
+    #y = random.choice([1,2,3])
+    #res = tasks.add.delay(x,y)
+    return render(request, "test_celery.html", { "monodrogas": data})
 
 def test_sin_celery(request):
-    x = random.choice([1,2,3])
-    y = random.choice([1,2,3])
-    res = tasks.add(x,y)
-    return render(request, "test_celery.html", {'resultado':res})
+    data = serializers.serialize("json", medicamento_models.Monodroga.objects.all())
+    #x = random.choice([1,2,3])
+    #y = random.choice([1,2,3])
+    #res = tasks.add(x,y)
+    tasks.enviar_mail()
+    return render(request, "test_celery.html", {'monodrogas':data})

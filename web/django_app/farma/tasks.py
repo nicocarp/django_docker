@@ -5,15 +5,13 @@ import time
 from django.core.mail import send_mail
 
 @shared_task
-def add(x, y):
+def enviar_mail():
     time.sleep( 5 )
-    resultado = x + y
-    print "fin sumando por mandar MAIL"
-    mge = "%d + %d = %d "%(x,y,resultado)
+
+    mge = "Un mensaje desde django"
     send_mail(subject='Desde django', 
               message=mge, 
               from_email='calfuquir.nico2@gmail.com',
               recipient_list=['norfuen@hotmail.com'], 
               fail_silently=False)
-    return resultado
-
+    return 1

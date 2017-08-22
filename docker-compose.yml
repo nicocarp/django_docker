@@ -7,17 +7,16 @@ services:
   web:
     build: ./web 
     command: ./run_web.sh
+    volumes:
+        - ./web/:/code
     expose:
       - "8000"
     depends_on:
       - db
     links:
       - rabbit
-    environment:
-      - NOMBRE_DB=postgres
-      - USUARIO_DB=postgres
-      - HOST_DB=db
-      - PORT_DB=5432
+    env_file:
+      - .env
   nginx:
     build: ./nginx
     ports:
@@ -36,8 +35,12 @@ services:
   worker:
     build: ./web
     command: bash -c "cd django_app/ && celery -A farma worker -l info"
+    volumes_from:
+        - web
     links:
       - db
       - rabbit
+    env_file:
+      - .env
     depends_on:
       - rabbit  
