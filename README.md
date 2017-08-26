@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# django_docker
-=======
 Administracion de Redes y Seguridad 2017
 =========================================
 
@@ -57,4 +54,3 @@ Una vez dentro del contenedor web creamos un superusuario para acceder a la apli
     $ >>> res = tasks.add.delay(2,5)
 
 Vemos el log del contenedor worker el cual muestra el resultado.
->>>>>>> ab2d3ff4cbb2340b6b30f0a607ced497e22d7b75
