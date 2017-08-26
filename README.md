@@ -7,7 +7,6 @@ Administracion de Redes y Seguridad 2017
   - [Contenido](#contenido)
   - [Requerimientos](#requerimientos)
   - [Iniciar la Aplicacion](#iniciar-la-aplicacion)
-  - [Para probar Celery](#para-probar-celery)
   
 
 ## Contenido ##
@@ -40,17 +39,8 @@ Contiene su correspondiente Dockerfile con imagen nginx, y archivo de configurac
     $sudo chown -R $USER:$USER
     $ docker-compose build
     $ docker-compose up -d
-    $ docker exec -ti finalseguridad_web_1 bash
+    $ docker exec -ti djangodocker_web_1 bash
 
 Una vez dentro del contenedor web creamos un superusuario para acceder a la aplicacion
 
-    $ python web/django_app/manage.py createsuperuser  
-
-## Para probar Celery ##
-
-    $ docker exec -ti finalseguridad_worker_1 bash
-    $ python manage.py shell
-    $ >>> from organizaciones import tasks
-    $ >>> res = tasks.add.delay(2,5)
-
-Vemos el log del contenedor worker el cual muestra el resultado.
+    $ python django_app/manage.py createsuperuser  
