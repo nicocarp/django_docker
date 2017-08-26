@@ -7,8 +7,6 @@ services:
   web:
     build: ./web 
     command: ./run_web.sh
-    volumes:
-        - ./web/:/code
     expose:
       - "8000"
     depends_on:
@@ -18,11 +16,11 @@ services:
     env_file:
       - .env
   nginx:
-    build: ./nginx
+    build:
+      context: ./
+      dockerfile: ./nginx/Dockerfile
     ports:
       - "8888:80"
-    volumes:
-      - ./web/django_app/estaticos:/estaticos
     depends_on:
       - web
   rabbit:
@@ -35,8 +33,6 @@ services:
   worker:
     build: ./web
     command: bash -c "cd django_app/ && celery -A farma worker -l info"
-    volumes_from:
-        - web
     links:
       - db
       - rabbit
