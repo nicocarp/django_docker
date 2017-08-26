@@ -1,0 +1,504 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="{% static 'css/pedidos-detalles.css' %}">
+    <link rel="stylesheet" href="{%  static 'css/selectize.css' %}">
+    <link rel="stylesheet" href="{%  static 'css/selectize.bootstrap3.css' %}">
+    <style>
+        .selectize-dropdown{
+            z-index: 10000!important;
+        }
+
+        tr {
+            font-size: 16px;
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        .header-pedido{
+            margin-top: 3rem;
+            padding: 2rem 1rem; 
+            border-bottom: 1px solid rgba(0,0,0,.1);
+        }
+
+        .header-pedido-nro {
+            background-color: #DEAE3A;
+            float: right;
+            padding: 1rem;
+            font-weight: bold;
+            color: #FFF;
+            border-radius: 5px;
+        }
+
+        .header-pedido-nro:hover {
+            background-color: #004693;
+        }
+
+        .header-pedido-title {
+            margin: 0;
+        }
+
+        .pedido-organizacion {
+            color: #004693;
+        }
+
+        .panel-detalle {
+            margin-top: 3rem;
+        }
+        
+        .header-tabla {
+          margin-top: 2rem;
+          padding: 1rem;
+          background-color: #fafafa;
+          border-radius: 5px;
+          border: 1px solid rgb(214,215,219);
+          box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+        }
+        .header-tabla-title {
+          display: inline-block;
+          margin: 0;
+          color: rgb(51,107,169);
+          font-size: 1.5rem;
+          font-weight: bolder;
+        }
+        
+        .table thead tr {
+            font-style: italic;
+        }
+        .container-btn-registrar{
+            padding-top: 1rem;
+            padding-right: 1rem;
+        }
+
+        .table-empty {
+            position: relative;
+            border: 2px dashed #ccc;
+            padding: 1rem;
+            height: 20rem;
+          overflow: hidden;
+        }
+
+        .table-empty-title,
+        .table-empty-msg {
+            position: absolute;
+            left: 50%; top: 50%;
+          width: 100%;
+          text-align: center;
+        }
+
+        .table-empty-title {
+            margin: 0;
+            -webkit-transform: translate(-50%, -150%);
+            transform: translate(-50%, -150%);
+        }
+
+        .table-empty-title span {
+            color: rgb(228,45,64);
+            top: 0;
+        }
+
+        .table-empty-msg {
+            -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+        }
+
+        .table-responsive {
+            max-height: 25rem;
+            overflow: auto;
+        }
+
+        .container-btn-registrar {
+            margin-bottom: 25px;
+        }
+    </style>
+    {% block more-stylesheets %}{% endblock %}
+{% endblock %}
+
+{% block title %}
+{% endblock %}
+
+{% block breadcrumb-items %}
+{% endblock %}
+
+{% block header-title %}{% endblock%}
+
+{% block url-volver %}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="header-pedido">
+                    <h2 class="header-pedido-title pull-left">
+                        {% block tipo-pedido %}{% endblock %}
+                        "<span class="pedido-organizacion">{% block pedido-organizacion %}{% endblock %}</span>"
+                    </h2>    
+                    <div class="header-pedido-nro pull-right"><span> Número {% block nro-pedido %}{% endblock %}</span></div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="header-tabla">
+                    <h3 class="header-tabla-title"><span class="glyphicon glyphicon-th-list"></span> Detalles</h3>
+                    {% block sin-botones-detalles %}
+                        <div class="header-tabla-botones pull-right">
+                            {% block botones-header-tabla %} 
+                            {% endblock %}
+                        </div>
+                        <div class="clearfix"></div>
+                    {% endblock %}
+                </div>
+                <div class="table-responsive">
+                    {% block table %} {% endblock %}
+                </div>
+                 <div id="table-empty" class="table-empty hidden">                 
+                    <h3 class="table-empty-title"> <span class="glyphicon glyphicon-exclamation-sign"></span> 
+                        El pedido aún no posee detalles.
+                    </h3>
+                    <em class="table-empty-msg">
+                        Puedes agregarlos presionando el botón de alta.
+                    </em>
+                </div>
+                <div class="pull-right container-btn-registrar">
+                    {% block btn-registrar %}
+                        <button id="btn-registrar" class="btn btn-primary" type="submit">Registrar</button>
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% block modals-abm %}
+        <div class="modal fade" id="modal-delete-detalle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Eliminar detalle</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>El detalle se eliminara permanentemente ¿esta seguro? </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <a href="#" id="btn-confirmar-baja-detalle" class="btn btn-danger">Confirmar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-add-detalle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title pull-left">Agregar detalle</h4>
+                        {% block medicamento-stock-alta %} {% endblock %}
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="collapse" id="collapse-add-detalle">
+                            <div role="alert">
+                                <span id="message-add-detalle"></span>
+                            </div>
+                        </div>
+                        <div id="form-add-detalle"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button id="btn-save-detalle" type="button" class="btn btn-primary">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-update-detalle" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title pull-left">Actualizar detalle</h4>
+                        {% block medicamento-stock-modificacion %} {% endblock %}
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-body">
+                         <div class="collapse" id="collapse-error">
+                            <div class="alert alert-danger" role="alert">
+                                <span id="message-error"></span>
+                            </div>
+                        </div>
+                        <div id="form-update-detalle"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button id="btn-save-update-detalle" type="button" class="btn btn-primary">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-error-registrar-pedido" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 class="modal-title">Registrar Pedido</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-center text-danger"><span class="glyphicon glyphicon-exclamation-sign"></span>
+                        <span id="mensaje-error-registrar"></span>
+                        </p>
+                    </div>
+                    <div class="modal-footer text-center">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-registrar-pedido" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h3 class="modal-title">{% block modal-header %}Registrar Pedido{% endblock %}</h3>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-center text-success"><span class="glyphicon glyphicon-ok"></span> {% block modal-body %}El pedido fue registrado correctamente{% endblock %}</p>
+                        {% block modal-body-extra %}
+                            <div id="generar-remito">
+                                <p class="text-center"><strong>¿Desea generar el remito?</strong></p>
+                            </div>
+                        {% endblock %}
+                    </div>
+                    <div class="modal-footer text-center">
+                        {% block modal-footer %}
+                            <button type="button" class="btn btn-default btn-generar-remito" data-dismiss="modal">No</button>
+                            <a id="btn-pdf" target="_blank" class="btn btn-success btn-generar-remito">Si</a>
+                            <button type="button" class="btn btn-default btn-sin-remito" data-dismiss="modal">Ok</button>
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+
+    {% block more-content %}{% endblock %}
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/utils.js' %}"></script>
+    <script>
+        (function(){
+             $("tbody").on("click", ".clickeable", function(e) {
+                 select_row_table(this);
+                 e.stopPropagation();
+             });
+
+             $(document).keyup(function(e){
+                 if(e.keyCode == 27){
+                     $("tr").removeClass("active");
+                 }
+                 e.stopPropagation();
+             });
+
+             $(document).on("click", function(e){
+                 $("tr").removeClass("active");
+                 e.stopPropagation();
+             });
+         })();
+    </script>
+
+    {% block scripts-abm-detalles %}
+        <script src="{% static 'js/ajax.js' %}"></script>
+        <script type="text/javascript" src="{%  static 'js/selectize.js' %}"></script>
+        <script>
+            function add_detalle_ajax(url){
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    dataType: 'json',
+                    success: function(data){
+                        if(data['success']){
+                            $("#form-add-detalle").replaceWith(data['form_html']);
+                            $('select').selectize({
+                                sortField: {
+                                    field: 'text',
+                                    direction: 'asc'
+                                },
+                                dropdownParent: 'body'
+                            });
+                            $("#modal-add-detalle").modal("show");
+                        }else{
+                            alert("Data = Error");
+                        }
+                    },
+                    error: function(err){
+                        alert("Fallo Ajax");
+                    },
+                });
+            }
+
+            function save_detalle_ajax(url){
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    dataType: 'json',
+                    data: $("#form-add-detalle").serialize(),
+                    async: false,
+                    success: function(data){
+                        if(data['success']){
+                            $("#form-add-detalle").replaceWith(data['form_html']);
+                            refresh_table(data['detalles']);
+                            controlTable();
+                        }else{
+                            //Si no viene con el formulario, hubo error con el medicamento
+                            if(! data['form_html']){
+                                loadMessageAddDetalle("Este medicamento ya esta cargado en un detalle del actual pedido", "alert alert-danger")
+                            }else{
+                                $("#form-add-detalle").replaceWith(data['form_html']);
+                            }
+                        }
+                    },
+                    error: function(err){
+                        alert("Fallo Ajax");
+                    },
+                });
+            }
+
+            function update_detalle_ajax(url){
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    dataType: 'json',
+                    success: function(data){
+                        if(data){
+                            $("#form-update-detalle").replaceWith(data['form_html']);
+                            $("#modal-update-detalle").modal('show'); 
+                        }
+                    },
+                    error: function(err){
+                        alert("Fallo Ajax");
+                    },
+                });
+            }
+
+            function save_update_ajax(url){
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    async: false,
+                    dataType: 'json',
+                    data: $("#form-update-detalle").serialize(),
+                    success: function(data){
+                        if(data['success']){
+                            refresh_table(data['detalles']);
+                            $("#modal-update-detalle").modal("hide");
+                        }else{
+                            $("#form-update-detalle").replaceWith(data['form_html']);
+                        }
+                    },
+                    error: function(error){
+                        alert("Fallo Ajax");
+                    },
+                });
+            }
+
+            function delete_detalle_ajax(url){
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    dataType: 'json',
+                    success: function(data){
+                        refresh_table(data['detalles']);
+                        controlTable();
+                    },
+                    error: function(err){
+                        alert("Fallo Ajax");
+                    },
+                })
+            }
+
+            function registrar_pedido_ajax(url){
+                $.ajax({
+                    type: 'GET',
+                    url: url,
+                    dataType: 'json',
+                    success: function(data){
+                        if(data['success']){
+                            var modal=$("#modal-registrar-pedido");
+                            if (data['existeRemito']){
+                                $("#btn-pdf").attr("href",{% block url-remito %}{% endblock %})
+                                modal.find('.btn-sin-remito').addClass("hidden");
+                            }else{
+                                modal.find('#generar-remito').addClass("hidden");
+                                modal.find('.btn-generar-remito').addClass("hidden");
+                            }
+                            modal.modal('show');
+                        }else{
+                            $("#mensaje-error-registrar").text(data['mensaje-error']);
+                            $("#modal-error-registrar-pedido").modal('show');
+                        }
+                    },
+                    error: function(err){
+                        alert("Fallo Ajax");
+                    },
+                });
+            }
+
+            function refresh_table(detalles){
+                var $tbody = $("table tbody");
+                $tbody.children().remove();
+                for(var i = 0; i < detalles.length; i++){
+                    var row = "<tr class=\"clickeable";
+                    if (detalles[i].detallePedidoFarmacia == -1){
+                        row += " editable";
+                    } 
+                    row += "\" data-id=" + detalles[i].renglon + 
+                    " data-medicamento="+ detalles[i].medicamento.id +"><td>" + 
+                    detalles[i].medicamento.descripcion + "</td><td>" + detalles[i].cantidad + 
+                    "</td></tr>";
+                    $tbody.append(row);
+                    console.log(detalles[i].medicamento.id + "\n");
+                }
+            }
+
+            function loadMessageAddDetalle(msg, clases){
+                var $collapse = $("#collapse-add-detalle");
+                var $mensaje = $("#message-add-detalle");
+                $mensaje.text(msg);
+                $mensaje.closest("div").removeClass();
+                $mensaje.closest("div").addClass(clases);
+                $collapse.collapse('show');
+                setTimeout(function(){
+                    $collapse.collapse('hide');
+                }, 3000);
+            }
+
+            $("#modal-add-detalle").on("change", "select", function(e){
+                $("#collapse-add-detalle").collapse('hide');
+            });
+
+            $("#btn-pdf").on("click", function(e){
+                $("#modal-registrar-pedido").modal('hide');
+            });
+
+            function controlTable() {
+                if ($('.table tbody tr').length == 0){
+                    $('#table-empty').removeClass('hidden');
+                }else{
+                    $('#table-empty').addClass('hidden');
+                }
+            }
+
+            controlTable();
+        </script>
+    {% endblock %}
+
+    {% block more-scripts%}{% endblock %}
+{% endblock %}

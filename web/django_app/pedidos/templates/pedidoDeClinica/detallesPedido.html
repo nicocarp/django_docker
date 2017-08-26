@@ -1,0 +1,182 @@
+{% extends "base-presentacion-pedido.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %}Detalles del Pedido de Clinica{% endblock %}
+
+{% block breadcrumb-items %}
+    <li><a href="{% url 'inicio' %}">Inicio</a></li>
+    <li><a href="{% url 'pedidosDeClinica' %}">Pedidos de Clínica</a></li>
+    <li><a href="{% url 'pedidoDeClinica_add' %}">Alta</a></li>
+    <li class="active">Detalles</li>
+{% endblock %}
+
+{% block header-title %} Detalles del Pedido de Clínica {% endblock%}
+
+{% block url-volver %}{% url 'pedidoDeClinica_add' %}{% endblock %}
+
+{% block botones-header-tabla %}
+    <div class="btn-group btn-group-xs">
+        <a id="btn-add-detalle" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span></a>
+        <a id="btn-update-detalle" class="btn btn-warning"><span class="glyphicon glyphicon-edit"></span></a>
+        <a id="btn-delete-detalle" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span></a>
+    </div>
+{% endblock %}
+
+{% block tipo-pedido %}Pedido de Clinica{% endblock %}
+
+{% block pedido-organizacion %}{{ pedido.clinica.razonSocial }}{% endblock %}
+
+{% block nro-pedido %} {{ pedido.nroPedido }} {% endblock %}
+
+{% block table %}
+    <table class="table table-condensed table-striped" >
+        <thead>
+            <tr align="center">
+                <th>Medicamento</th>
+                <th>Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in detalles %}
+                <tr class="clickeable" data-id="{{ detalle.renglon }}" data-medicamento="{{detalle.medicamento.id}}">
+                    <td>{{ detalle.medicamento.descripcion }}</td>
+                    <td>{{ detalle.cantidad }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block medicamento-stock-alta %}
+    <p class="pull-right">
+        <span class="medicamento-stock"></span>
+    </p>
+{% endblock %}
+
+{% block medicamento-stock-modificacion %} 
+    <p class="pull-right">
+        <span class="medicamento-stock"></span>
+    </p>
+{% endblock %}
+
+{% block url-remito %}"/pedidosDeClinica/remitoDeClinica/"+data['nroRemito']+"/"{% endblock %}
+
+{% block panel-footer %}
+    <div class="panel-footer">
+        <div class="pull-right">
+            <button id="btn-registrar" class="btn btn-primary" type="submit">Registrar</button>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+{% endblock %}
+
+{% block more-scripts %}
+    <script>
+        (function(){
+            $('#modal-registrar-pedido').on('hidden.bs.modal', function(e){
+                window.location = "{% url 'pedidosDeClinica' %}";
+                e.stopPropagation();
+            })
+
+            /****************************** Botones Alta Detalle ***************************************/
+
+            $("#btn-add-detalle").on("click", function(e){
+                add_detalle_ajax("{% url 'detallePedidoDeClinica_add' %}");
+                e.stopPropagation();
+            });
+
+            $("#btn-save-detalle").on("click", function(e){
+                save_detalle_ajax("{% url 'detallePedidoDeClinica_add' %}");
+                e.stopPropagation()
+            });
+
+            /****************************** Botones Modificacion Detalle ***************************************/
+            var id;
+
+            $("#btn-update-detalle").on("click", function(e){
+                id = get_selected_row();
+                if(id){
+                    update_detalle_ajax("/pedidosDeClinica/add/detalles/update/" + id + "/");
+                }
+                e.stopPropagation();
+            });
+
+            $("#btn-save-update-detalle").on("click", function(e){
+                if(id){
+                    save_update_ajax("/pedidosDeClinica/add/detalles/update/" + id + "/");
+                }
+                e.stopPropagation();
+            });
+
+            /****************************** Boton Baja Detalle ***************************************/
+
+            $("#btn-delete-detalle").on("click", function(e){
+                var id = get_selected_row();
+                if(id){
+                    $("#modal-delete-detalle").modal('show');
+                }
+                e.stopPropagation();
+            });
+
+            $("#btn-confirmar-baja-detalle").on("click", function(e){
+                var id = get_selected_row();
+                if(id){
+                    delete_detalle_ajax("/pedidosDeClinica/add/detalles/delete/" + id + "/");
+                    $("#modal-delete-detalle").modal('hide');
+                }
+                e.stopPropagation();
+            });
+
+            /****************************** Boton Registrar Pedido ***************************************/
+
+            $("#btn-registrar").on("click", function(e){
+                registrar_pedido_ajax("{% url 'pedidoDeClinica_registrar' %}");
+                e.stopPropagation();
+            });
+        })();
+
+        (function(){
+            var medicamentos = {
+                {% for medicamentoStock in medicamentosStock %}
+                    {{medicamentoStock.id}}: {{ medicamentoStock.stock}},
+                {% endfor %}
+            };
+
+            $('#modal-add-detalle').on('show.bs.modal', function(){
+                var $selectMedicamento = $(this).find('#id_medicamento');
+                $selectMedicamento.on('change', load_stock.bind(this));
+            });
+
+            $('#modal-add-detalle').on('hidden.bs.modal', function(){
+                $(this).find(".medicamento-stock").text("");
+            });
+
+            $('#modal-update-detalle').on('show.bs.modal', function(e){
+                var idMedicamento = $('.clickeable.active').data('medicamento');
+                $(this).find('.medicamento-stock').text("Disponible: " + medicamentos[idMedicamento])
+            });
+
+            $('#modal-update-detalle').on('hidden.bs.modal', function(){
+                $(this).find(".medicamento-stock").text("");
+            });
+
+            function load_stock(e) {
+                var idMedicamento = $(this).find('option:selected').val();
+                if(idMedicamento){
+                    $(this).find('.medicamento-stock').text('Disponible: ' + medicamentos[idMedicamento]);
+                }else{
+                    $(this).find('.medicamento-stock').text('-');
+                }
+            }
+
+            $(document).on("keyup", function(e){
+                if(e.keyCode == 112){
+                    var url = "{% static 'documentacion/build/html/pedidosclinica.html' %}";
+                    url += "#alta-pedido";
+                    window.open(url);
+                }
+            });
+        })();
+    </script>
+{% endblock %}

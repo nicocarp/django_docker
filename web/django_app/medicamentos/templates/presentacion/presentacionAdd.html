@@ -1,0 +1,38 @@
+{% extends "base/base-add-update-2.html" %}
+{% load staticfiles %}
+
+{% block title %}Alta de Presentación{% endblock %}
+
+{% block breadcrumb-items %}
+    <li><a href="{% url 'inicio' %}">Inicio</a></li>
+    <li><a href="{% url 'presentaciones' %}">Presentaciones</a></li>
+    <li class="active">Alta</li>
+{% endblock %}
+
+{% block url-volver %}{% url 'presentaciones' %}{% endblock %}
+
+{% block header-title %} Alta de Presentación {% endblock %}
+
+{% block title-header-form %}Agregar nueva presentación{% endblock %}
+
+{% block icon-header-form %}
+    <span class="glyphicon glyphicon-plus page-header-icon"></span>
+{% endblock%}
+
+{% block sub-header-form %}Complete los siguientes campos{% endblock %}
+
+{% block msg-success %}
+    La presentación fue agregada exitosamente al sistema.
+{% endblock %}
+
+{% block more-scripts %}
+    <script>
+        $(document).on("keyup", function(e){
+            if(e.keyCode == 112){
+                var url = "{% static 'documentacion/build/html/presentaciones.html' %}";
+                url += "#alta-presentacion";
+                window.open(url);
+            }
+        });
+    </script>
+{% endblock %}

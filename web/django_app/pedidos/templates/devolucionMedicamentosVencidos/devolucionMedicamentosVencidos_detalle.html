@@ -1,0 +1,95 @@
+{% extends "base-presentacion-pedido.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block title %}Detalles Devolución de Medicamentos Vencidos{% endblock %}
+
+{% block breadcrumb-items %}
+    <li><a href="{% url 'inicio' %}">Inicio</a></li>
+    <li><a href="{% url 'devolucionMedicamentosVencidos' %}">Crear Devolución</a></li>
+    <li class="active">Detalles</li>
+{% endblock %}
+
+{% block header-title %} Detalles Devolución de Medicamentos Vencidos {% endblock%}
+
+{% block tipo-pedido %}Detalles Devolución de Medicamentos Vencidos{% endblock %}
+
+{% block pedido-organizacion %} {{ laboratorio.razonSocial }} {% endblock %}
+
+{% block nro-pedido %} {{ numero }} {% endblock %}
+
+{% block table %}
+    <table class="table table-condensed table-striped" >
+        <thead>
+            <tr class="info" align="center">
+                <th>Lote</th>
+                <th>Medicamento</th>
+                <th>Fecha de vencimiento</th>
+                <th>Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lote in lotes%}
+                <tr>
+                    <td>{{ lote.numero}}</td>
+                    <td>{{ lote.medicamento}}</td>
+                    <td>{{ lote.fechaVencimiento }}</td>
+                    <td>{{ lote.stock}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block btn-registrar %}
+    <a id="btn-registrar" href="{% url 'devolucionMedicamentosVencidos_registrar' laboratorioId %}" class="btn btn-primary" type="submit">Registrar</a>
+{% endblock %}
+
+{% block modals-abm %}
+    <div class="modal fade" id="modal-registrar-devolucion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title">Registrar Devolución</h3>
+                </div>
+                <div class="modal-body">
+                    <p class="text-center text-success"><span class="glyphicon glyphicon-ok"></span> La devolución se registro correctamente</p>
+                    <div id="generar-remito">
+                        <p class="text-center"><strong>¿Desea generar el remito?</strong></p>
+                    </div>
+                </div>
+                <div class="modal-footer text-center">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                    <a id="btn-pdf" href="{% url 'remitoDevolucion' numero %}" target="_blank" class="btn btn-success">Si</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block more-scripts %}
+    <script>
+        {% if abrirModal %}
+            $("#modal-registrar-devolucion").modal('show');
+         {% endif %}
+
+        $("#btn-pdf").on("click", function(e){
+            $("#modal-registrar-devolucion").modal('hide');
+        });
+
+        $('#modal-registrar-devolucion').on('hidden.bs.modal', function(e){
+            window.location = "{% url 'inicio' %}";
+            e.stopPropagation();
+        })
+
+        $(document).on("keyup", function(e){
+            if(e.keyCode == 112){
+                var url = "{% static 'documentacion/build/html/devolucionvencidos.html' %}";
+                url += "#registrar-devolucion";
+                window.open(url);
+            }
+        });
+    </script>
+{% endblock %}
+

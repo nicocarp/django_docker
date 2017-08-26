@@ -1,0 +1,42 @@
+version: '2'
+services:
+  db:
+    image: postgres
+    volumes:
+        - ./volumen_db:/var/lib/postgresql/data
+  web:
+    build: ./web 
+    command: ./run_web.sh
+    expose:
+      - "8000"
+    depends_on:
+      - db
+    links:
+      - rabbit
+    env_file:
+      - .env
+  nginx:
+    build:
+      context: ./
+      dockerfile: ./nginx/Dockerfile
+    ports:
+      - "8888:80"
+    depends_on:
+      - web
+  rabbit:
+    hostname: rabbit
+    image: rabbitmq
+    expose:
+      - "5672"
+      - "15672"
+  # Celery worker
+  worker:
+    build: ./web
+    command: bash -c "cd django_app/ && celery -A farma worker -l info"
+    links:
+      - db
+      - rabbit
+    env_file:
+      - .env
+    depends_on:
+      - rabbit  
